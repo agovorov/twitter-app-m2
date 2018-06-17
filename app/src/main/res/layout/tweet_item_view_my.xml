@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="6dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/tweet_image_view"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginEnd="10dp"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/tweet_user_name"
+        android:layout_toEndOf="@+id/tweet_image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Devcolibri"
+        android:textStyle="bold"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:id="@+id/tweet_posted"
+        android:layout_toEndOf="@+id/tweet_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-@devcolibri нояб. 27"
+        />
+
+    <TextView
+        android:id="@+id/tweet_description"
+        android:layout_toEndOf="@+id/tweet_image_view"
+        android:layout_below="@+id/tweet_user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Сегодня поговорим о RecylceView и почему надо использовать именно его"
+        />
+
+    <ImageView
+        android:id="@+id/tweet_photo"
+        android:layout_toEndOf="@+id/tweet_image_view"
+        android:layout_below="@+id/tweet_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_launcher"
+        android:background="@color/colorPrimary"
+        />
+
+    <LinearLayout
+        android:layout_toEndOf="@+id/tweet_image_view"
+        android:layout_below="@+id/tweet_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+        <TextView
+            android:id="@+id/tweet_retweet_tv"
+            android:fontFamily="@font/font_awesome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/fa_retweet"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:id="@+id/tweet_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0" />
+
+        <TextView
+            android:id="@+id/tweet_like_tv"
+            android:fontFamily="@font/font_awesome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/fa_heart_o"
+            android:layout_weight="1"
+
+            />
+    </LinearLayout>
+
+</RelativeLayout>
