@@ -67,13 +67,10 @@ public class UserInfoActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                tweetAdapter.clearItems();
-                loadUserInfo(userId);
-                loadTweets(userId);
-            }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            tweetAdapter.clearItems();
+            loadUserInfo(userId);
+            loadTweets(userId);
         });
 
         initRecyclerView();

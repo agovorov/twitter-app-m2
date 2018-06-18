@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,8 @@ public class SearchUsersActivity extends AppCompatActivity {
     private EditText queryEditText;
     private Button searchButton;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     HttpClient httpClient;
 
     @Override
@@ -53,31 +56,20 @@ public class SearchUsersActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        /*
-        searchButton.setOnClickListener((view)-> {
-            searchUsers();
-        });
-        */
+        searchButton.setOnClickListener(v -> searchUsers());
 
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        queryEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 searchUsers();
+                return true;
             }
-        });
-
-        queryEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    searchUsers();
-                    return true;
-                }
-                return false;
-            }
+            return false;
         });
 
         httpClient = new HttpClient();
+
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(() -> searchUsers());
     }
 
     @Override
@@ -94,20 +86,13 @@ public class SearchUsersActivity extends AppCompatActivity {
 
     private void initRecyclerView() {
         usersRecyclerView = findViewById(R.id.users_recycler_view);
-
         usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         usersRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        usersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        UsersAdapter.OnUserClickListener onUserClickListener = new UsersAdapter.OnUserClickListener() {
-            @Override
-            public void onUserClick(User user) {
-                Intent intent = new Intent(SearchUsersActivity.this, UserInfoActivity.class);
-                intent.putExtra(UserInfoActivity.USER_ID, user.getId());
-                startActivity(intent);
-                //Toast.makeText(SearchUsersActivity.this, "user " + user.getName(), Toast.LENGTH_SHORT).show();
-            }
+        UsersAdapter.OnUserClickListener onUserClickListener = user -> {
+            Intent intent = new Intent(SearchUsersActivity.this, UserInfoActivity.class);
+            intent.putExtra(UserInfoActivity.USER_ID, user.getId());
+            startActivity(intent);
         };
         usersAdapter = new UsersAdapter(onUserClickListener);
         usersRecyclerView.setAdapter(usersAdapter);
@@ -125,22 +110,32 @@ public class SearchUsersActivity extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     private class SearchUsersAsyncTask extends AsyncTask<String, Integer, Collection<User>> {
         @Override
+        protected void onPreExecute() {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        @Override
         protected Collection<User> doInBackground(String... params) {
             String query = params[0];
             try {
                 return httpClient.readUsers(query);
             } catch (IOException | JSONException e) {
-                e.printStackTrace();
                 return null;
             }
         }
 
+        @Override
         protected void onPostExecute(Collection<User> users) {
+            swipeRefreshLayout.setRefreshing(false);
+
+            // успешный ответ
             if (users != null) {
                 usersAdapter.clearItems();
                 usersAdapter.setItems(users);
-            } else {
-                Toast.makeText(SearchUsersActivity.this, R.string.loading_error_msg, Toast.LENGTH_SHORT).show();
+            }
+            // ошибка
+            else {
+                Toast.makeText(SearchUsersActivity.this, "Error during loading info", Toast.LENGTH_SHORT).show();
             }
         }
     }

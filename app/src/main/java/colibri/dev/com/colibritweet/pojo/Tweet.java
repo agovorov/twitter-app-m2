@@ -1,14 +1,20 @@
 package colibri.dev.com.colibritweet.pojo;
 
 
+import com.google.gson.annotations.SerializedName;
+
 public class Tweet {
-    private User user;
-    private Long id;
-    private String creationDate;
-    private String text;
-    private Long retweetCount;
-    private Long favouriteCount;
+    @SerializedName("user") private User user;
+    @SerializedName("id") private Long id;
+    @SerializedName("created_at") private String creationDate;
+    @SerializedName("full_text") private String text;
+    @SerializedName("retweet_count") private Long retweetCount;
+    @SerializedName("favorite_count") private Long favouriteCount;
     private String imageUrl;
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public Tweet(User user, Long id, String creationDate, String text,
                  Long retweetCount, Long favouriteCount, String imageUrl) {
